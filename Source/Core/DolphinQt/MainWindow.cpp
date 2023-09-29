@@ -656,6 +656,8 @@ void MainWindow::ConnectHotkeys()
 
   connect(m_hotkey_scheduler, &HotkeyScheduler::SkylandersPortalHotkey, this,
           &MainWindow::ShowSkylanderPortal);
+  connect(m_hotkey_scheduler, &HotkeyScheduler::LoadSkylander, this, &MainWindow::LoadSkylander);
+  connect(m_hotkey_scheduler, &HotkeyScheduler::ConfirmSkylander, this, &MainWindow::ConfirmSkylander);
   connect(m_hotkey_scheduler, &HotkeyScheduler::InfinityBaseHotkey, this,
           &MainWindow::ShowInfinityBase);
 }
@@ -1359,6 +1361,16 @@ void MainWindow::ShowSkylanderPortal()
   m_skylander_window->show();
   m_skylander_window->raise();
   m_skylander_window->activateWindow();
+}
+void MainWindow::LoadSkylander()
+{
+  if (!m_skylander_window) m_skylander_window = new SkylanderPortalWindow();
+  m_skylander_window->LoadSkylander();
+}
+void MainWindow::ConfirmSkylander()
+{
+  if (!m_skylander_window) m_skylander_window = new SkylanderPortalWindow();
+  m_skylander_window->ConfirmSkylander();
 }
 
 void MainWindow::ShowInfinityBase()

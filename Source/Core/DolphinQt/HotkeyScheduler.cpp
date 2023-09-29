@@ -38,6 +38,7 @@
 #endif
 #include "DolphinQt/QtUtils/QueueOnObject.h"
 #include "DolphinQt/Settings.h"
+#include "DolphinQt/SkylanderPortal/SkylanderPortal.h"
 
 #include "InputCommon/ControlReference/ControlReference.h"
 #include "InputCommon/ControllerInterface/ControllerInterface.h"
@@ -486,6 +487,10 @@ void HotkeyScheduler::Run()
       // USB Device Emulation
       if (IsHotkey(HK_SKYLANDERS_PORTAL))
         emit SkylandersPortalHotkey();
+      if (IsHotkey(HK_LOAD_SKYLANDER))
+        emit LoadSkylander();
+      if (SkylanderPortal::GetInstance().IsActive() && IsHotkey(HK_CONFIRM_SKYLANDER))
+        emit ConfirmSkylander();
 
       if (IsHotkey(HK_INFINITY_BASE))
         emit InfinityBaseHotkey();

@@ -16,6 +16,8 @@
 #include "Core/Core.h"
 #include "Core/IOS/USB/Emulated/Skylander.h"
 
+#include "DolphinQt/SkylanderPortal/SkylanderPortal.h"
+
 class QCheckBox;
 class QGroupBox;
 class QLineEdit;
@@ -45,11 +47,17 @@ public:
 
   void RefreshList();
 
+  void LoadSkylander();
+  void ConfirmSkylander();
+
 protected:
   std::array<QLineEdit*, MAX_SKYLANDERS> m_edit_skylanders;
   std::array<std::optional<Skylander>, MAX_SKYLANDERS> m_sky_slots;
 
 private:
+  void LoadSkylander(std::string s);
+  void GetAllSkylander();
+
   // Window
   void CreateMainWindow();
   QVBoxLayout* CreateSlotLayout();

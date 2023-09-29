@@ -196,6 +196,12 @@ constexpr std::array<const char*, NUM_HOTKEYS> s_hotkey_labels{{
     _trans("4x"),
 
     _trans("Show Skylanders Portal"),
+
+    _trans("Load Skylander"),
+    _trans("Select Skylander Left"),
+    _trans("Select Skylander Right"),
+    _trans("Confirm Skylander"),
+
     _trans("Show Infinity Base")
 }};
 // clang-format on

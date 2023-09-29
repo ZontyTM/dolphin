@@ -92,9 +92,63 @@ SkylanderPortalWindow::SkylanderPortalWindow(QWidget* parent) : QWidget(parent)
   m_collection_path = QDir::toNativeSeparators(skylanders_folder.path()) + QDir::separator();
   m_last_skylander_path = m_collection_path;
   m_path_edit->setText(m_collection_path);
+
+  //Zonty
+  /*QMessageBox::information(
+      this, tr("Info"),
+      QStringLiteral("%1").arg(QString::fromStdString(skylanders.front())),
+      QMessageBox::Ok);*/
+
+  GetAllSkylander();
 };
 
 SkylanderPortalWindow::~SkylanderPortalWindow() = default;
+
+void SkylanderPortalWindow::LoadSkylander(std::string s) {
+  LoadSkyfilePath(0, QStringLiteral("%1%2.sky").arg(m_collection_path).arg(QString::fromStdString(s)));
+}
+void SkylanderPortalWindow::LoadSkylander()
+{
+  ClearSlot(0);
+  SkylanderPortal::GetInstance().actived();
+}
+void SkylanderPortalWindow::ConfirmSkylander()
+{
+  LoadSkylander(SkylanderPortal::GetInstance().GetCurrent());
+}
+
+void SkylanderPortalWindow::GetAllSkylander()
+{
+  const QDir collection = QDir(m_collection_path);
+  auto& system = Core::System::GetInstance();
+  std::list<SkylanderPortal::Skylander> skylanders;
+  for (const auto& file : collection.entryInfoList(QStringList(QStringLiteral("*.sky")), QDir::Files, QDir::Time))
+  {
+
+    File::IOFile sky_file(file.filePath().toStdString(), "r+b");
+    if (!sky_file)
+    {
+      continue;
+    }
+    std::array<u8, 0x40 * 0x10> file_data;
+    if (!sky_file.ReadBytes(file_data.data(), file_data.size()))
+    {
+      continue;
+    }
+
+    auto ids = system.GetSkylanderPortal().CalculateIDs(file_data);
+
+    const auto skypair = IOS::HLE::USB::list_skylanders.find(std::make_pair(ids.first, ids.second));
+    IOS::HLE::USB::SkyData character;
+    if (skypair == IOS::HLE::USB::list_skylanders.end()) continue;
+    else character = skypair->second;
+
+    skylanders.push_back({file.baseName().toStdString(), (int)character.element});
+  }
+  LoadSkylander(skylanders.front().name);
+
+  SkylanderPortal::GetInstance().set(skylanders);
+}
 
 // Window creation
 void SkylanderPortalWindow::CreateMainWindow()
@@ -120,19 +174,22 @@ void SkylanderPortalWindow::CreateMainWindow()
   QBoxLayout* command_layout = new QHBoxLayout;
   m_command_buttons = new QFrame();
   command_layout->setAlignment(Qt::AlignCenter);
+
   auto* create_btn = new QPushButton(tr("Customize"));
   auto* load_file_btn = new QPushButton(tr("Load File"));
   auto* clear_btn = new QPushButton(tr("Clear Slot"));
   auto* load_btn = new QPushButton(tr("Load Slot"));
-  connect(create_btn, &QAbstractButton::clicked, this,
-          &SkylanderPortalWindow::CreateSkylanderAdvanced);
+
+  connect(create_btn, &QAbstractButton::clicked, this, &SkylanderPortalWindow::CreateSkylanderAdvanced);
   connect(clear_btn, &QAbstractButton::clicked, this, [this]() { ClearSlot(GetCurrentSlot()); });
   connect(load_btn, &QAbstractButton::clicked, this, &SkylanderPortalWindow::LoadSelected);
   connect(load_file_btn, &QAbstractButton::clicked, this, &SkylanderPortalWindow::LoadFromFile);
+
   command_layout->addWidget(create_btn);
   command_layout->addWidget(load_file_btn);
   command_layout->addWidget(clear_btn);
   command_layout->addWidget(load_btn);
+
   m_command_buttons->setLayout(command_layout);
   main_layout->addWidget(m_command_buttons);
 
@@ -562,7 +619,7 @@ void SkylanderPortalWindow::LoadFromFile()
   const QString file_path =
       DolphinFileDialog::getOpenFileName(this, tr("Select Skylander File"), m_last_skylander_path,
                                          tr("Skylander (*.sky);;All Files (*)"));
-  ;
+
   if (file_path.isEmpty())
   {
     return;

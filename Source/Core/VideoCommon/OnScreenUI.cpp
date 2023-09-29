@@ -30,6 +30,8 @@
 #include <imgui.h>
 #include <implot.h>
 
+#include "DolphinQt/SkylanderPortal/SkylanderPortal.h"
+
 namespace VideoCommon
 {
 bool OnScreenUI::Initialize(u32 width, u32 height, float scale)
@@ -329,6 +331,8 @@ void OnScreenUI::DrawDebugText()
 void OnScreenUI::Finalize()
 {
   auto lock = GetImGuiLock();
+
+  SkylanderPortal::GetInstance().show();
 
   g_perf_metrics.DrawImGuiStats(m_backbuffer_scale);
   DrawDebugText();

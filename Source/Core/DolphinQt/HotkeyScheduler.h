@@ -66,6 +66,8 @@ signals:
   void AddBreakpoint();
 
   void SkylandersPortalHotkey();
+  void LoadSkylander();
+  void ConfirmSkylander();
   void InfinityBaseHotkey();
 
 private:

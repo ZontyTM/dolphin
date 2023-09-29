@@ -167,6 +167,8 @@ private:
   void ShowNetPlayBrowser();
   void ShowFIFOPlayer();
   void ShowSkylanderPortal();
+  void LoadSkylander();
+  void ConfirmSkylander();
   void ShowInfinityBase();
   void ShowMemcardManager();
   void ShowResourcePackManager();
